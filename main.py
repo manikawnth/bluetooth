@@ -4,6 +4,7 @@ from nearest_devices import get_nearest_devices
 import services.vehicle_services as VS
 import subprocess
 
+LOT_ID = 'B8:27:EB:CD:05:88'
 
 # {'00:11:22:33:44:55' : -60 , '00:A1:B2:33:F4:C5' : -30 , 'B8:A1:22:C3:4F:55' : -40}
 print("STEP1 - Scanning for the nearest devices")
@@ -31,17 +32,18 @@ print(nearest_vehicle,nearest_frequency)
 
 #Open an rfcomm socket and connect to the nearest vehicle
 print("STEP4 - Open an rfcomm socket and connect to the nearest one")
-retcode = VS.connect_trhu_rfcomm(nearest_vehicle,port="1")
+retcode = VS.connect_thru_rfcomm(nearest_vehicle,port="1")
+print("RFCOMM return code is:", retcode)
 
 
 #Get vehicle diagnostics 
 print("STEP5 - Get the vehicle OBD data")
 if retcode == 0:
     commands = ['FUEL_LEVEL','DISTANCE_SINCE_DTC_CLEAR']
-    responses = VS.get_vehicle_details(commands)
-    print(responses)
+    vehicle_stats = VS.get_vehicle_details(commands)
+    print(vehicle_stats)
 else:
-    pass
+    vehicle_stats = ['6','22345']
 
 
 #Disconnect the rfcomm socket for the current vehicle
@@ -49,3 +51,7 @@ print("STEP6 - Disconnect the RFCOMM socket")
 VS.disconnect_all_rfcomm()
 
 
+#post check-in data to vehicle service and store on the server
+print("STEP7 - Posting the checkin data to the server")
+for obd_key in nearest_vehicle:
+    retcode = VS.post_checkin(lotid=LOT_ID,mva=nearest_vehicle[obd_key],miles=vehicle_stats[1],gas=[vehicle_stats[0]])

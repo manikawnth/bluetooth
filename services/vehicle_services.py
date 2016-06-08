@@ -3,8 +3,10 @@ import time
 import subprocess
 import obd
 
-PARKLOT_HOST = 'https://parklot.herokuapp.com/'
-VALIDATE_VEH_SERV = 'veh/'
+PARKLOT_HOST = r'https://parklot.herokuapp.com/'
+#PARKLOT_HOST = r'http://192.168.11.14:4040/'
+VALIDATE_VEH_SERV = r'veh/'
+POST_CHECKIN_SERV = r'checkin/'
 
 def get_valid_mvas(vehdata={"veh":[]}):
     print("Posting data to the server for MVA validation ...")
@@ -23,13 +25,18 @@ def connect_thru_rfcomm(vehaddr,port="1"):
     except:
         return -1
 
+
 def disconnect_all_rfcomm():
     try:
         proc2 = subprocess.Popen(["rfcomm", "release", "/dev/rfcomm0"])
         time.sleep(5)
         print("Disconnected")
+    except:
+        pass
+
 
 def get_vehicle_details(commands=[None]):
+    print("Getting vehicle details from OBD")
     responses = []
     if(commands[0] != None):
         conn = obd.OBD("/dev/rfcomm0")
@@ -39,4 +46,13 @@ def get_vehicle_details(commands=[None]):
             responses.append((resp.value,resp.unit))
     return responses
 
+
+def post_checkin(lotid=None,mva=None,miles=None,gas=None):
+    if (lotid != None):
+        print("Posting checked-in vehicle data ...")
+        requrl = PARKLOT_HOST + POST_CHECKIN_SERV
+        checkin_data = {'lotid':lotid, 'mva':mva, 'miles':miles, 'gas':gas}
+        r = requests.post(requrl, checkin_data)
+        print(r)
+        return None
 
