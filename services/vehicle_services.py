@@ -10,11 +10,12 @@ POST_CHECKIN_SERV = r'checkin/'
 
 def get_valid_mvas(vehdata={"veh":[]}):
     print("Posting data to the server for MVA validation ...")
+    valid_mvas = []
     requrl = PARKLOT_HOST + VALIDATE_VEH_SERV
     r = requests.post(requrl, vehdata)
     print(r.json())
-    nearest_vehicles = r.json()['veh']
-    return nearest_vehicles
+    valid_mvas = r.json()['veh']
+    return valid_mvas
 
 def connect_thru_rfcomm(vehaddr,port="1"):
     try:
@@ -53,6 +54,7 @@ def post_checkin(lotid=None,mva=None,miles=None,gas=None):
         requrl = PARKLOT_HOST + POST_CHECKIN_SERV
         checkin_data = {'lotid':lotid, 'mva':mva, 'miles':miles, 'gas':gas}
         r = requests.post(requrl, checkin_data)
-        print(r)
+        print(r.status_code)
+        #print(r.json())
         return None
 
