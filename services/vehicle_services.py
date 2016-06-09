@@ -9,22 +9,23 @@ VALIDATE_VEH_SERV = r'veh/'
 POST_CHECKIN_SERV = r'checkin/'
 
 def get_valid_mvas(vehdata={"veh":[]}):
-    print("Posting data to the server for MVA validation ...")
+    print("Posting data to the server for MVA validation ...",vehdata)
     valid_mvas = []
     requrl = PARKLOT_HOST + VALIDATE_VEH_SERV
     r = requests.post(requrl, vehdata)
+    print(r.status_code)
     print(r.json())
     valid_mvas = r.json()['veh']
     return valid_mvas
 
 def connect_thru_rfcomm(vehaddr,port="1"):
-    try:
+    #try:
         proc = subprocess.Popen(["rfcomm", "connect", "/dev/rfcomm0", vehaddr,port,"&"])
         time.sleep(10)
         print("Slept for 10 secs: Command should have completed")
         return 0
-    except:
-        return -1
+    #except:
+    #    return -1
 
 
 def disconnect_all_rfcomm():
