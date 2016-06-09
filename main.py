@@ -45,7 +45,7 @@ while True:
     #Get vehicle diagnostics
     print("STEP5 - Get the vehicle OBD data")
     if (nearest_vehicle_id == 'A0:02:DC:51:49:F9'):
-        vehicle_stats = ['6', '22345']
+        vehicle_stats = [('6','unit'), ('22345','miles')]
     elif retcode == 0:
         commands = ['FUEL_LEVEL','DISTANCE_SINCE_DTC_CLEAR']
         vehicle_stats = VS.get_vehicle_details(commands)
@@ -61,4 +61,4 @@ while True:
 
     #post check-in data to vehicle service and store on the server
     print("STEP7 - Posting the checkin data to the server")
-    retcode = VS.post_checkin(lotid=LOT_ID,mva=nearest_vehicle,miles=vehicle_stats[1][0],gas=[vehicle_stats[0][0]])
+    retcode = VS.post_checkin(lotid=LOT_ID,mva=nearest_vehicle,miles=vehicle_stats[1][0],gas=round(vehicle_stats[0][0]))
