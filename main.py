@@ -61,4 +61,4 @@ while True:
 
     #post check-in data to vehicle service and store on the server
     print("STEP7 - Posting the checkin data to the server")
-    retcode = VS.post_checkin(lotid=LOT_ID,mva=nearest_vehicle,miles=vehicle_stats[1][0],gas=round(vehicle_stats[0][0]))
+    retcode = VS.post_checkin(lotid=LOT_ID,mva=nearest_vehicle,miles=vehicle_stats[1][0],gas=str(round(float(vehicle_stats[0][0]))))
